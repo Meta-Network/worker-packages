@@ -1,0 +1,32 @@
+{
+  "name": "@metaio/worker-model",
+  "version": "1.4.0",
+  "description": "Meta worker model",
+  "author": "Meta Network Group",
+  "homepage": "https://github.com/Meta-Network/worker-packages#readme",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "directories": {
+    "lib": "./lib"
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Meta-Network/worker-packages.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Meta-Network/worker-packages/issues"
+  },
+  "scripts": {
+    "prebuild": "rimraf lib",
+    "prepack": "yarn run build",
+    "build": "tsc --project tsconfig.build.json",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  }
+}
