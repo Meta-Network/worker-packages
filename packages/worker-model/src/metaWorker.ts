@@ -115,6 +115,9 @@ export namespace MetaWorker {
        */
       HEXO_CREATE_POST = 'HEXO_CREATE_POST',
       HEXO_UPDATE_POST = 'HEXO_UPDATE_POST',
+      HEXO_CREATE_DRAFT = 'HEXO_CREATE_DRAFT',
+      HEXO_UPDATE_DRAFT = 'HEXO_UPDATE_DRAFT',
+      HEXO_PUBLISH_DRAFT = 'HEXO_PUBLISH_DRAFT',
     }
     enum DNSTaskMethod {
       /**
