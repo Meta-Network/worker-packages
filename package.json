@@ -11,6 +11,7 @@
     "clean": "rimraf packages/**/lib",
     "format": "prettier --write 'packages/**/src/**/*.ts'",
     "lint": "eslint 'packages/**/src/**/*.ts' --fix",
+    "publish": "lerna publish",
     "prepare": "husky install"
   },
   "devDependencies": {
