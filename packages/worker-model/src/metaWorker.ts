@@ -268,7 +268,7 @@ export namespace MetaWorker {
     export type PostConfig = {
       user: Info.UCenterUser;
       site: Info.CmsSiteInfo & Info.CmsSiteConfig;
-      post: Info.Post;
+      post: Info.Post | Array<Info.Post>;
       git: Info.Git;
     };
     export type PostTaskConfig = BaseTaskConfig & PostConfig;
