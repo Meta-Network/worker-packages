@@ -46,7 +46,7 @@
     "winston-loki": "^6.0.1"
   },
   "peerDependencies": {
-    "@metaio/worker-model": "1.4.x",
+    "@metaio/worker-model": "1.5.x",
     "superagent": "6.x",
     "winston": "3.x",
     "winston-loki": "6.x"
