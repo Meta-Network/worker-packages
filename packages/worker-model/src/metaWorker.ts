@@ -93,6 +93,7 @@ export namespace MetaWorker {
        * Overwrite site themes.
        */
       GIT_OVERWRITE_THEME = 'GIT_OVERWRITE_THEME',
+      GIT_GENERATE_SITE_CONFIG = 'GIT_GENERATE_SITE_CONFIG',
     }
     enum HexoTaskMethod {
       /**
