@@ -93,7 +93,6 @@ export namespace MetaWorker {
        * Overwrite site themes.
        */
       GIT_OVERWRITE_THEME = 'GIT_OVERWRITE_THEME',
-      GIT_GENERATE_SITE_CONFIG = 'GIT_GENERATE_SITE_CONFIG',
     }
     enum HexoTaskMethod {
       /**
@@ -129,16 +128,21 @@ export namespace MetaWorker {
     enum PublishTaskMethod {
       PUBLISH_GITHUB_PAGES = 'PUBLISH_GITHUB_PAGES',
     }
+    enum MetaSpaceTaskMethod {
+      GENERATE_METASPACE_CONFIG = 'GENERATE_METASPACE_CONFIG',
+    }
     export type TaskMethod =
       | GitTaskMethod
       | HexoTaskMethod
       | DNSTaskMethod
-      | PublishTaskMethod;
+      | PublishTaskMethod
+      | MetaSpaceTaskMethod;
     export const TaskMethod = {
       ...GitTaskMethod,
       ...HexoTaskMethod,
       ...DNSTaskMethod,
       ...PublishTaskMethod,
+      ...MetaSpaceTaskMethod,
     };
 
     export enum TaskReportReason {
