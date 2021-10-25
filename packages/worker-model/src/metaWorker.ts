@@ -159,6 +159,7 @@ export namespace MetaWorker {
       subtitle?: string;
       description?: string;
       author?: string;
+      avatar?: string;
       keywords?: string[] | null;
       favicon?: string | null;
     };
