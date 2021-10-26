@@ -202,6 +202,7 @@ export namespace MetaWorker {
     };
 
     export type Post = {
+      [key: string]: string | number | Array<string | number>;
       title: string;
       source: string;
       cover?: string;
