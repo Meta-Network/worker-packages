@@ -304,6 +304,11 @@ export namespace MetaWorker {
       user: Info.UCenterUser;
       site: Info.CmsSiteInfo & Info.CmsSiteConfig;
       theme?: Info.Theme;
+      gateway?: {
+        [service: string]: {
+          baseUrl: string;
+        };
+      };
     };
   }
 }
