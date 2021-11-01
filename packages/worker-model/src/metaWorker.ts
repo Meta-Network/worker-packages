@@ -230,6 +230,12 @@ export namespace MetaWorker {
       publishBranch: string;
     };
 
+    export type Gateway = {
+      [service: string]: {
+        baseUrl: string;
+      };
+    };
+
     export type Task = {
       taskId: string;
       taskMethod: Enums.TaskMethod;
@@ -269,6 +275,7 @@ export namespace MetaWorker {
       template: Info.Template;
       theme: Info.Theme;
       git: Info.Git;
+      gateway?: Info.Gateway;
     };
     export type DeployTaskConfig = BaseTaskConfig & DeployConfig;
 
@@ -304,11 +311,7 @@ export namespace MetaWorker {
       user: Info.UCenterUser;
       site: Info.CmsSiteInfo & Info.CmsSiteConfig;
       theme?: Info.Theme;
-      gateway?: {
-        [service: string]: {
-          baseUrl: string;
-        };
-      };
+      gateway?: Info.Gateway;
     };
   }
 }
