@@ -307,11 +307,7 @@ export namespace MetaWorker {
     };
     export type DnsTaskConfig = BaseTaskConfig & DnsConfig;
 
-    export type MetaSpaceConfig = {
-      user: Info.UCenterUser;
-      site: Info.CmsSiteInfo & Info.CmsSiteConfig;
-      theme?: Info.Theme;
-      gateway?: Info.Gateway;
-    };
+    export type MetaSpaceConfig = Pick<DeployConfig, 'user' | 'site'> &
+      Partial<Pick<DeployConfig, 'theme' | 'gateway'>>;
   }
 }
