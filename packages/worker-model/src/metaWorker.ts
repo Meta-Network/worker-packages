@@ -267,8 +267,8 @@ export namespace MetaWorker {
     };
 
     type GitConfig = {
-      storage: Info.Git;
-      publisher: Info.Git;
+      storage?: Info.Git;
+      publisher?: Info.Git;
     };
 
     /**
