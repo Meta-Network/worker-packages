@@ -193,12 +193,12 @@ export namespace MetaWorker {
     };
 
     export type Git = {
-      gitToken: string;
-      gitType: Enums.GitServiceType;
-      gitUsername: string;
-      gitReponame: string;
-      gitBranchName: string;
-      gitLastCommitHash?: string | null;
+      token: string;
+      serviceType: Enums.GitServiceType;
+      username: string;
+      reponame: string;
+      branchName: string;
+      lastCommitHash?: string | null;
     };
 
     export type Post = {
@@ -266,6 +266,11 @@ export namespace MetaWorker {
       taskStepChain?: Info.TaskStepChain;
     };
 
+    type GitConfig = {
+      storage: Info.Git;
+      publisher: Info.Git;
+    };
+
     /**
      * All about deploy needed configs
      */
@@ -274,7 +279,7 @@ export namespace MetaWorker {
       site: Info.CmsSiteInfo & Info.CmsSiteConfig;
       template: Info.Template;
       theme: Info.Theme;
-      git: Info.Git;
+      git: GitConfig;
       gateway?: Info.Gateway;
     };
     export type DeployTaskConfig = BaseTaskConfig & DeployConfig;
@@ -283,7 +288,7 @@ export namespace MetaWorker {
       user: Info.UCenterUser;
       site: Info.CmsSiteInfo & Info.CmsSiteConfig;
       post: Info.Post | Array<Info.Post>;
-      git: Info.Git;
+      git: GitConfig;
     };
     export type PostTaskConfig = BaseTaskConfig & PostConfig;
 
@@ -294,7 +299,7 @@ export namespace MetaWorker {
     export type PublishConfig = {
       site: Info.CmsSiteInfo & Info.CmsSiteConfig;
       publish: Info.Publish;
-      git: Info.Git;
+      git: GitConfig;
     };
     export type PublishTaskConfig = BaseTaskConfig & PublishConfig;
 
