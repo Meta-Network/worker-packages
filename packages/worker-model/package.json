@@ -1,6 +1,6 @@
 {
   "name": "@metaio/worker-model",
-  "version": "1.6.0",
+  "version": "1.6.2",
   "description": "Meta worker model",
   "author": "Meta Network Group",
   "homepage": "https://github.com/Meta-Network/worker-packages#readme",
