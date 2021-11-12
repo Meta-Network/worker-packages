@@ -236,6 +236,16 @@ export namespace MetaWorker {
       };
     };
 
+    export type Metadata = {
+      [key: string]:
+        | string
+        | string[]
+        | {
+            storageType: string;
+            refer: string;
+          };
+    };
+
     export type Task = {
       taskId: string;
       taskMethod: Enums.TaskMethod;
@@ -281,6 +291,7 @@ export namespace MetaWorker {
       theme: Info.Theme;
       git: GitConfig;
       gateway?: Info.Gateway;
+      metadata?: Info.Metadata;
     };
     export type DeployTaskConfig = BaseTaskConfig & DeployConfig;
 
