@@ -324,6 +324,6 @@ export namespace MetaWorker {
     export type DnsTaskConfig = BaseTaskConfig & DnsConfig;
 
     export type MetaSpaceConfig = Pick<DeployConfig, 'user' | 'site'> &
-      Partial<Pick<DeployConfig, 'theme' | 'gateway'>>;
+      Partial<Omit<DeployConfig, 'user' | 'site' | 'template' | 'git'>>;
   }
 }
