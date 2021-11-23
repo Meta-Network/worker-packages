@@ -1,6 +1,6 @@
 {
   "name": "@metaio/worker-common",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "description": "Meta worker common",
   "author": "Meta Network Group",
   "homepage": "https://github.com/Meta-Network/worker-packages#readme",
@@ -35,7 +35,7 @@
     "lodash.set": "^4.3.2"
   },
   "devDependencies": {
-    "@metaio/worker-model": "^1.6.4",
+    "@metaio/worker-model": "^1.6.5",
     "@types/lodash.get": "^4.4.6",
     "@types/lodash.has": "^4.5.6",
     "@types/lodash.set": "^4.3.6",
