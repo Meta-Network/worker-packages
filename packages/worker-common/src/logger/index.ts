@@ -13,10 +13,11 @@ import { isProd } from '../utils';
 
 export class LoggerService {
   public constructor(private readonly options: LoggerServiceOptions) {
-    const { appName, hostName, backendUrl, secret, lokiUrl } = options;
+    const { appName, hostName, backendUrl, secret, lokiUrl } = this.options;
     const dirName = appName.toLowerCase();
     const baseDir = fs.mkdtempSync(`${path.join(os.tmpdir(), dirName)}-`);
     const level = this.mkLevel(process.env.DEBUG);
+    const noColor = 'NO_COLOR' in process.env;
 
     const reportAppErrorStatus = (err: Error): boolean => {
       // Dirty code!
@@ -85,7 +86,7 @@ export class LoggerService {
       new winston.transports.Console({
         level: 'error',
         format: winston.format.combine(
-          winston.format.colorize({ all: true }),
+          winston.format.colorize({ all: !noColor }),
           winston.format.metadata({
             fillExcept: ['label', 'timestamp', 'level', 'message'],
           }),
@@ -132,7 +133,7 @@ export class LoggerService {
 
     const debugConsoleTransport: transport = new winston.transports.Console({
       format: winston.format.combine(
-        winston.format.colorize({ all: true }),
+        winston.format.colorize({ all: !noColor }),
         winston.format.metadata({
           fillExcept: ['label', 'timestamp', 'level', 'message'],
         }),
