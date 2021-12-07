@@ -1,6 +1,7 @@
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import pc from 'picocolors';
 import process from 'process';
 import superagent from 'superagent';
 import winston, { createLogger, transport } from 'winston';
@@ -45,12 +46,14 @@ export class LoggerService {
 
     const errorConsoleFormat = winston.format.printf((info) => {
       if (process.env.DEBUG)
-        console.log('\x1B[35merrorConsoleFormat:info:\x1B[39m', info);
+        console.log(pc.magenta('errorConsoleFormat:info:'), info);
       const { metadata, label, timestamp, level, message } = info;
       const host = metadata?.host ? `:${metadata.host}` : '';
       const pid = metadata?.runtime?.pid || 'null';
       const ctx = metadata?.context;
-      return `\x1B[32m[${label}${host}] ${pid} -\x1B[39m ${timestamp}     ${level} \x1B[33m[${ctx}]\x1B[39m ${message}`;
+      return `${pc.green(
+        `[${label}${host}] ${pid} -`,
+      )} ${timestamp}     ${level} ${pc.yellow(`[${ctx}]`)} ${message}`;
     });
 
     const transports: transport[] = [
@@ -113,16 +116,18 @@ export class LoggerService {
 
     const debugConsoleFormat = winston.format.printf((info) => {
       if (process.env.DEBUG)
-        console.log('\x1B[35mdebugConsoleFormat:info:\x1B[39m', info);
+        console.log(pc.magenta('debugConsoleFormat:info:'), info);
       const { metadata, label, timestamp, level, message } = info;
       const host = metadata?.host ? `:${metadata.host}` : '';
       const pid = metadata?.runtime?.pid || 'null';
       const ctx = metadata?.context;
       const ms = metadata?.ms || '';
       const stack = metadata?.stack;
-      return `\x1B[32m[${label}${host}] ${pid} -\x1B[39m ${timestamp}     ${level} \x1B[33m[${ctx}]\x1B[39m ${message} \x1B[33m${ms}\x1B[39m${
-        stack ? '\n\x1B[31m' + stack + '\x1B[39m' : ''
-      }`;
+      return `${pc.green(
+        `[${label}${host}] ${pid} -`,
+      )} ${timestamp}     ${level} ${pc.yellow(
+        `[${ctx}]`,
+      )} ${message} ${pc.yellow(`${ms}`)}${stack ? pc.red(`\n${stack}`) : ''}`;
     });
 
     const debugConsoleTransport: transport = new winston.transports.Console({
@@ -143,7 +148,7 @@ export class LoggerService {
 
     this.final = (error?: Error | string) => {
       if (process.env.DEBUG)
-        console.log('\x1B[35mLoggerService:final:info:\x1B[39m', error);
+        console.log(pc.magenta('LoggerService:final:info:'), error);
       if (error instanceof Error) {
         process.exitCode = 1;
         this.logger.error(`The process was exit cause: `, error);
