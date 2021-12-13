@@ -46,7 +46,7 @@ export class LoggerService {
     );
 
     const errorConsoleFormat = winston.format.printf((info) => {
-      if (process.env.DEBUG)
+      if (process.env.DEBUG && process.env.ENABLE_FORMAT_INFO)
         console.log(pc.magenta('errorConsoleFormat:info:'), info);
       const { metadata, label, timestamp, level, message } = info;
       const host = metadata?.host ? `:${metadata.host}` : '';
@@ -116,7 +116,7 @@ export class LoggerService {
     });
 
     const debugConsoleFormat = winston.format.printf((info) => {
-      if (process.env.DEBUG)
+      if (process.env.DEBUG && process.env.ENABLE_FORMAT_INFO)
         console.log(pc.magenta('debugConsoleFormat:info:'), info);
       const { metadata, label, timestamp, level, message } = info;
       const host = metadata?.host ? `:${metadata.host}` : '';
