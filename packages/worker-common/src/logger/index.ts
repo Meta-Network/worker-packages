@@ -148,7 +148,7 @@ export class LoggerService {
     this.logger = _logger;
 
     this.final = (error?: Error | string) => {
-      if (process.env.DEBUG)
+      if (process.env.DEBUG && process.env.ENABLE_FORMAT_INFO)
         console.log(pc.magenta('LoggerService:final:info:'), error);
       if (error instanceof Error) {
         process.exitCode = 1;
