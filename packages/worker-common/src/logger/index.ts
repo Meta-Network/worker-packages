@@ -22,7 +22,8 @@ export class LoggerService {
     const reportAppErrorStatus = (err: Error): boolean => {
       // Dirty code!
       try {
-        const _url = `${backendUrl}/${hostName}`;
+        const baseUrl = `${backendUrl}/`.replace(/([^:]\/)\/+/g, '$1');
+        const _url = new URL(hostName, baseUrl).toString();
         const _auth = `Basic ${Buffer.from(secret).toString('base64')}`;
 
         superagent
