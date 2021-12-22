@@ -101,6 +101,7 @@ export class LoggerService {
     ];
 
     const _logger = createLogger({
+      levels: winston.config.npm.levels,
       level,
       format: defaultWinstonFormat,
       defaultMeta: {
@@ -170,16 +171,14 @@ export class LoggerService {
   readonly final: (error?: Error | string | null, ...args: any[]) => void;
 
   private mkLevel(l: string): keyof RemoveIndex<CliConfigSetLevels> {
+    // https://github.com/winstonjs/winston#logging-levels
     const levelArr = [
       'error',
       'warn',
-      'help',
-      'data',
       'info',
-      'debug',
-      'prompt',
+      'http',
       'verbose',
-      'input',
+      'debug',
       'silly',
     ];
     if (levelArr.includes(l)) {
