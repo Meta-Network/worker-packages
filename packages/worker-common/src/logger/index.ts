@@ -16,7 +16,7 @@ export class LoggerService {
     const { appName, hostName, backendUrl, secret, lokiUrl } = this.options;
     const dirName = appName.toLowerCase();
     const baseDir = fs.mkdtempSync(`${path.join(os.tmpdir(), dirName)}-`);
-    const level = this.mkLevel(process.env.DEBUG);
+    const level = this.mkLevel(process.env.LOG_LEVEL);
     const noColor = 'NO_COLOR' in process.env;
 
     const reportAppErrorStatus = (err: Error): boolean => {
@@ -60,9 +60,13 @@ export class LoggerService {
 
     const transports: transport[] = [
       new LokiTransport({
-        level: 'verbose',
+        level: 'silly',
         json: true,
         labels: { job: appName },
+        format: winston.format.combine(
+          winston.format.timestamp({ format: 'isoDateTime' }),
+          winston.format.json(),
+        ),
         host: lokiUrl,
         handleExceptions: true,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -184,7 +188,7 @@ export class LoggerService {
     if (levelArr.includes(l)) {
       return l as keyof RemoveIndex<CliConfigSetLevels>;
     }
-    if (isProd()) return 'info';
-    return 'verbose';
+    if (process.env.DEBUG) return 'debug';
+    return 'info';
   }
 }
