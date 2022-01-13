@@ -21,7 +21,8 @@ export const isDeployTask = (
     (conf as MetaWorker.Configs.DeployTaskConfig).user &&
     (conf as MetaWorker.Configs.DeployTaskConfig).site &&
     (conf as MetaWorker.Configs.DeployTaskConfig).git &&
-    (conf as MetaWorker.Configs.DeployTaskConfig).git.storage
+    (conf as MetaWorker.Configs.DeployTaskConfig).git.storage &&
+    !(conf as MetaWorker.Configs.PostTaskConfig)?.post
   )
     return true;
   return false;
