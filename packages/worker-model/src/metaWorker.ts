@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-unresolved
+import { SetOptional } from 'type-fest';
+
 /* eslint-disable @typescript-eslint/no-namespace */
 export namespace MetaWorker {
   export namespace Enums {
@@ -54,98 +57,13 @@ export namespace MetaWorker {
       CNAME = 'CNAME',
     }
 
-    enum GitTaskMethod {
-      /**
-       * Create new repo from template archive zip file
-       *
-       * 1. Git init
-       * 2. Download zip archive and decompress
-       * 3. Copy template files to repo
-       * 4. Git commit and push
-       *
-       * Original name: CREATE_REPO_FROM_TEMPLATE
-       */
-      GIT_INIT_PUSH = 'GIT_INIT_PUSH',
-      /**
-       * Update exist repo use template files
-       *
-       * 1. Git clone and checkout
-       * 2. Download zip archive and decompress
-       * 3. Copy template files to repo
-       * 4. Git commit and push
-       *
-       * Original name: UPDATE_REPO_USE_TEMPLATE
-       */
-      GIT_OVERWRITE_PUSH = 'GIT_OVERWRITE_PUSH',
-      /**
-       * Chekout repo from remote url, same as `actions/checkout`
-       */
-      GIT_CLONE_CHECKOUT = 'GIT_CLONE_CHECKOUT',
-      /**
-       * Commit files and push to remote
-       *
-       * 1. Git add
-       * 2. Git commit
-       * 3. Git push
-       */
-      GIT_COMMIT_PUSH = 'GIT_COMMIT_PUSH',
-      /**
-       * Overwrite site themes.
-       */
-      GIT_OVERWRITE_THEME = 'GIT_OVERWRITE_THEME',
+    export enum WorkerTaskMethod {
+      DEPLOY_SITE = 'DEPLOY_SITE',
+      PUBLISH_SITE = 'PUBLISH_SITE',
+      CREATE_POSTS = 'CREATE_POSTS',
+      UPDATE_POSTS = 'UPDATE_POSTS',
+      DELETE_POSTS = 'DELETE_POSTS',
     }
-    enum HexoTaskMethod {
-      /**
-       * Update Hexo config files from task config,
-       * include Hexo config and theme config
-       *
-       * Original name: UPDATE_HEXO_CONFIG_FILES
-       */
-      HEXO_UPDATE_CONFIG = 'HEXO_UPDATE_CONFIG',
-      /**
-       * Generate Hexo static files, aka `$ hexo generate`
-       *
-       * Original name: GENERATE_HEXO_STATIC_FILES
-       */
-      HEXO_GENERATE_DEPLOY = 'HEXO_GENERATE_DEPLOY',
-      /**
-       * Create Hexo post, aka `$ hexo new`
-       *
-       * Original name: CREATE_HEXO_POST_FILES
-       */
-      HEXO_CREATE_POST = 'HEXO_CREATE_POST',
-      HEXO_UPDATE_POST = 'HEXO_UPDATE_POST',
-      HEXO_DELETE_POST = 'HEXO_DELETE_POST',
-      HEXO_CREATE_DRAFT = 'HEXO_CREATE_DRAFT',
-      HEXO_UPDATE_DRAFT = 'HEXO_UPDATE_DRAFT',
-      HEXO_PUBLISH_DRAFT = 'HEXO_PUBLISH_DRAFT',
-      HEXO_MOVETO_DRAFT = 'HEXO_MOVETO_DRAFT',
-    }
-    enum DNSTaskMethod {
-      /**
-       * Update dns record
-       */
-      DNS_UPDATE_RECORD = 'DNS_UPDATE_RECORD',
-    }
-    enum PublishTaskMethod {
-      PUBLISH_GITHUB_PAGES = 'PUBLISH_GITHUB_PAGES',
-    }
-    enum MetaSpaceTaskMethod {
-      GENERATE_METASPACE_CONFIG = 'GENERATE_METASPACE_CONFIG',
-    }
-    export type TaskMethod =
-      | GitTaskMethod
-      | HexoTaskMethod
-      | DNSTaskMethod
-      | PublishTaskMethod
-      | MetaSpaceTaskMethod;
-    export const TaskMethod = {
-      ...GitTaskMethod,
-      ...HexoTaskMethod,
-      ...DNSTaskMethod,
-      ...PublishTaskMethod,
-      ...MetaSpaceTaskMethod,
-    };
 
     export enum TaskReportReason {
       STARTED = 'STARTED',
@@ -181,8 +99,8 @@ export namespace MetaWorker {
 
     export type Template = {
       templateName: string;
-      templateRepoUrl: string;
-      templateBranchName: string;
+      templateRepo: string;
+      templateBranch: string;
       templateType?: Enums.TemplateType;
     };
 
@@ -190,7 +108,7 @@ export namespace MetaWorker {
       themeName: string;
       themeRepo: string;
       themeBranch: string;
-      themeType: Enums.TemplateType;
+      themeType?: Enums.TemplateType;
       isPackage?: boolean;
     };
 
@@ -199,7 +117,7 @@ export namespace MetaWorker {
       serviceType: Enums.GitServiceType;
       username: string;
       reponame: string;
-      branchName: string;
+      branchname: string;
       lastCommitHash?: string | null;
     };
 
@@ -250,8 +168,7 @@ export namespace MetaWorker {
 
     export type Task = {
       taskId: string;
-      taskMethod: Enums.TaskMethod;
-      taskWorkspace: string;
+      taskMethod: Enums.WorkerTaskMethod;
       createAt?: number;
       startAt?: number;
       updateAt?: number;
@@ -260,27 +177,22 @@ export namespace MetaWorker {
     };
 
     export type TaskReport = {
+      taskId: string;
+      taskMethod: Enums.WorkerTaskMethod;
       reason: Enums.TaskReportReason;
       timestamp: number;
       data?: unknown;
-    };
-
-    export type TaskStepChain = {
-      taskSteps: Enums.TaskMethod[];
-      taskStepIndex: number;
-      taskStepResults: Record<Enums.TaskMethod, any>;
     };
   }
 
   export namespace Configs {
     type BaseTaskConfig = {
       task: Info.Task;
-      taskStepChain?: Info.TaskStepChain;
     };
 
     type GitConfig = {
-      storage?: Info.Git;
-      publisher?: Info.Git;
+      storage: Info.Git;
+      publisher: Info.Git;
     };
 
     /**
@@ -289,32 +201,35 @@ export namespace MetaWorker {
     export type DeployConfig = {
       user: Info.UCenterUser;
       site: Info.CmsSiteInfo & Info.CmsSiteConfig;
-      template: Info.Template;
-      theme: Info.Theme;
-      git: GitConfig;
+      git: SetOptional<GitConfig, 'publisher'>;
+      template?: Info.Template;
+      theme?: Info.Theme;
       gateway?: Info.Gateway;
       metadata?: Info.Metadata;
     };
     export type DeployTaskConfig = BaseTaskConfig & DeployConfig;
 
-    export type PostConfig = {
-      user: Info.UCenterUser;
-      site: Info.CmsSiteInfo & Info.CmsSiteConfig;
-      post: Info.Post | Array<Info.Post>;
-      git: GitConfig;
-    };
-    export type PostTaskConfig = BaseTaskConfig & PostConfig;
-
     /**
      * All about publish needed configs
-     * e.g. site title, domain, git info
      */
     export type PublishConfig = {
       site: Info.CmsSiteInfo & Info.CmsSiteConfig;
-      publish: Info.Publish;
-      git: GitConfig;
+      git: SetOptional<GitConfig, 'storage'>;
+      metadata?: Info.Metadata;
+      publish?: Info.Publish;
     };
     export type PublishTaskConfig = BaseTaskConfig & PublishConfig;
+
+    /**
+     * All about post needed configs
+     */
+    export type PostConfig = {
+      user: Info.UCenterUser;
+      site: Info.CmsSiteInfo & Info.CmsSiteConfig;
+      git: SetOptional<GitConfig, 'publisher'>;
+      post: Info.Post | Array<Info.Post>;
+    };
+    export type PostTaskConfig = BaseTaskConfig & PostConfig;
 
     /**
      * All about dns configs
