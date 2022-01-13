@@ -1,7 +1,7 @@
 {
   "name": "@metaio/worker-model",
   "version": "1.7.6",
-  "description": "Meta worker model",
+  "description": "Meta Space CMS worker model",
   "author": "Meta Network Group",
   "homepage": "https://github.com/Meta-Network/worker-packages#readme",
   "license": "MIT",
@@ -28,5 +28,8 @@
     "prepack": "yarn run build",
     "build": "tsc --project tsconfig.build.json",
     "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "type-fest": "^2.9.0"
   }
 }
