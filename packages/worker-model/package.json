@@ -27,7 +27,7 @@
     "prebuild": "rimraf lib",
     "prepack": "yarn run build",
     "build": "tsc --project tsconfig.build.json",
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "test": "echo \"No test\" && exit 0"
   },
   "dependencies": {
     "type-fest": "^2.9.0"
