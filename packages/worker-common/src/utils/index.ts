@@ -17,14 +17,27 @@ export const isProd = (): boolean => {
 export const isDeployTask = (
   conf: unknown,
 ): conf is MetaWorker.Configs.DeployTaskConfig => {
-  if ((conf as MetaWorker.Configs.DeployTaskConfig).template) return true;
+  if (
+    (conf as MetaWorker.Configs.DeployTaskConfig).user &&
+    (conf as MetaWorker.Configs.DeployTaskConfig).site &&
+    (conf as MetaWorker.Configs.DeployTaskConfig).git &&
+    (conf as MetaWorker.Configs.DeployTaskConfig).git.storage
+  )
+    return true;
   return false;
 };
 
 export const isPublishTask = (
   conf: unknown,
 ): conf is MetaWorker.Configs.PublishTaskConfig => {
-  if ((conf as MetaWorker.Configs.PublishTaskConfig).publish) return true;
+  if (
+    (conf as MetaWorker.Configs.PublishTaskConfig).site &&
+    (conf as MetaWorker.Configs.PublishTaskConfig).git &&
+    (conf as MetaWorker.Configs.PublishTaskConfig).git.publisher &&
+    !(conf as MetaWorker.Configs.DeployTaskConfig)?.user &&
+    !(conf as MetaWorker.Configs.PostTaskConfig)?.post
+  )
+    return true;
   return false;
 };
 
@@ -36,8 +49,8 @@ export const isPostTask = (
 };
 
 export const checkAllowedTasks = (
-  check: MetaWorker.Enums.TaskMethod,
-  alloweds: MetaWorker.Enums.TaskMethod[],
+  check: MetaWorker.Enums.WorkerTaskMethod,
+  alloweds: MetaWorker.Enums.WorkerTaskMethod[],
 ) => {
   if (!alloweds.includes(check)) {
     throw new Error(`Task method ${check} is not allowed or supported.`);
