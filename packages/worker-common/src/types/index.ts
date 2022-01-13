@@ -1,3 +1,5 @@
+import { MetaWorker } from '@metaio/worker-model';
+
 export type RemoveIndex<Q> = {
   [key in keyof Q as string extends key
     ? never
@@ -8,16 +10,16 @@ export type RemoveIndex<Q> = {
 
 export type LoggerServiceOptions = {
   appName: string;
-  hostName: string;
   secret: string;
   backendUrl: string;
   lokiUrl: string;
 };
 
 export type BackendTaskServiceOptions = {
-  hostName: string;
   secret: string;
   backendUrl: string;
+  taskId: string;
+  taskMethod: MetaWorker.Enums.WorkerTaskMethod;
 };
 
 export type ConfigGetOptions = {

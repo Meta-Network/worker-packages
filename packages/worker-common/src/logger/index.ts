@@ -13,7 +13,7 @@ import { isProd } from '../utils';
 
 export class LoggerService {
   public constructor(private readonly options: LoggerServiceOptions) {
-    const { appName, hostName, backendUrl, secret, lokiUrl } = this.options;
+    const { appName, backendUrl, secret, lokiUrl } = this.options;
     const dirName = appName.toLowerCase();
     const baseDir = fs.mkdtempSync(`${path.join(os.tmpdir(), dirName)}-`);
     const level = this.mkLevel(process.env.LOG_LEVEL);
@@ -23,7 +23,7 @@ export class LoggerService {
       // Dirty code!
       try {
         const baseUrl = `${backendUrl}/`.replace(/([^:]\/)\/+/g, '$1');
-        const _url = new URL(hostName, baseUrl).toString();
+        const _url = new URL(baseUrl).toString();
         const _auth = `Basic ${Buffer.from(secret).toString('base64')}`;
 
         superagent
@@ -109,7 +109,6 @@ export class LoggerService {
       level,
       format: defaultWinstonFormat,
       defaultMeta: {
-        host: hostName,
         runtime: {
           pid: process.pid,
           platform: process.platform,

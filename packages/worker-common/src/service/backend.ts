@@ -10,17 +10,21 @@ export class BackendTaskService {
     private readonly logger: winston.Logger,
     options: BackendTaskServiceOptions,
   ) {
-    const { hostName, backendUrl, secret } = options;
+    const { backendUrl, secret, taskId, taskMethod } = options;
     this.client = superagent;
 
     this.authInfo = `Basic ${Buffer.from(secret).toString('base64')}`;
     const baseUrl = `${backendUrl}/`.replace(/([^:]\/)\/+/g, '$1');
-    this.apiUrl = new URL(hostName, baseUrl).toString();
+    this.apiUrl = new URL(baseUrl).toString();
+    this.taskId = taskId;
+    this.taskMethod = taskMethod;
   }
 
   private readonly client: SuperAgentStatic;
   private readonly authInfo: string;
   private readonly apiUrl: string;
+  private readonly taskId: string;
+  private readonly taskMethod: MetaWorker.Enums.WorkerTaskMethod;
 
   async getWorkerTaskFromBackend<T = unknown>(): Promise<T> {
     this.logger.info('Getting new task config from backend', {
@@ -45,6 +49,8 @@ export class BackendTaskService {
     });
 
     const data: MetaWorker.Info.TaskReport = {
+      taskId: this.taskId,
+      taskMethod: this.taskMethod,
       reason: MetaWorker.Enums.TaskReportReason.STARTED,
       timestamp: Date.now(),
     };
@@ -71,6 +77,8 @@ export class BackendTaskService {
     });
 
     const data: MetaWorker.Info.TaskReport = {
+      taskId: this.taskId,
+      taskMethod: this.taskMethod,
       reason: MetaWorker.Enums.TaskReportReason.FINISHED,
       timestamp: Date.now(),
     };
@@ -97,6 +105,8 @@ export class BackendTaskService {
     });
 
     const data: MetaWorker.Info.TaskReport = {
+      taskId: this.taskId,
+      taskMethod: this.taskMethod,
       reason: MetaWorker.Enums.TaskReportReason.ERRORED,
       timestamp: Date.now(),
       data: error,
@@ -124,6 +134,8 @@ export class BackendTaskService {
     });
 
     const data: MetaWorker.Info.TaskReport = {
+      taskId: this.taskId,
+      taskMethod: this.taskMethod,
       reason: MetaWorker.Enums.TaskReportReason.HEALTH_CHECK,
       timestamp: Date.now(),
     };
