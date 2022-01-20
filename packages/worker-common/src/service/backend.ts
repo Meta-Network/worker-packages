@@ -1,30 +1,24 @@
 import { MetaWorker } from '@metaio/worker-model';
 import superagent, { SuperAgentStatic } from 'superagent';
-import { URL } from 'url';
 import winston from 'winston';
 
-import { BackendTaskServiceOptions } from '../types';
+import { BackendApiOptions } from '../types';
+import { BackendApi } from './api';
 
 export class BackendTaskService {
   constructor(
     private readonly logger: winston.Logger,
-    options: BackendTaskServiceOptions,
+    options: BackendApiOptions,
   ) {
-    const { backendUrl, secret, taskId, taskMethod } = options;
+    const { taskId } = options;
     this.client = superagent;
-
-    this.authInfo = `Basic ${Buffer.from(secret).toString('base64')}`;
-    const baseUrl = `${backendUrl}/`.replace(/([^:]\/)\/+/g, '$1');
-    this.apiUrl = new URL(baseUrl).toString();
+    this.api = new BackendApi(options);
     this.taskId = taskId;
-    this.taskMethod = taskMethod;
   }
 
   private readonly client: SuperAgentStatic;
-  private readonly authInfo: string;
-  private readonly apiUrl: string;
+  private readonly api: BackendApi;
   private readonly taskId: string;
-  private readonly taskMethod: MetaWorker.Enums.WorkerTaskMethod;
 
   async getWorkerTaskFromBackend<T = unknown>(): Promise<T> {
     this.logger.info('Getting new task config from backend', {
@@ -33,8 +27,8 @@ export class BackendTaskService {
 
     try {
       const _res = await this.client
-        .get(this.apiUrl)
-        .set('Authorization', this.authInfo);
+        .get(this.api.getUrl)
+        .set('Authorization', this.api.authorization);
       const _data: T = _res?.body?.data;
       if (!_data) throw Error('Can not get task config from backend');
       return _data;
@@ -50,16 +44,15 @@ export class BackendTaskService {
 
     const data: MetaWorker.Info.TaskReport = {
       taskId: this.taskId,
-      taskMethod: this.taskMethod,
       reason: MetaWorker.Enums.TaskReportReason.STARTED,
       timestamp: Date.now(),
     };
 
     try {
       const _res = await this.client
-        .patch(this.apiUrl)
+        .patch(this.api.reportUrl)
         .send(data)
-        .set('Authorization', this.authInfo);
+        .set('Authorization', this.api.authorization);
       this.logger.info(
         `Report worker task started to backend ${_res.statusCode}`,
         {
@@ -78,16 +71,15 @@ export class BackendTaskService {
 
     const data: MetaWorker.Info.TaskReport = {
       taskId: this.taskId,
-      taskMethod: this.taskMethod,
       reason: MetaWorker.Enums.TaskReportReason.FINISHED,
       timestamp: Date.now(),
     };
 
     try {
       const _res = await this.client
-        .patch(this.apiUrl)
+        .patch(this.api.reportUrl)
         .send(data)
-        .set('Authorization', this.authInfo);
+        .set('Authorization', this.api.authorization);
       this.logger.info(
         `Report worker task finished to backend ${_res.statusCode}`,
         {
@@ -99,24 +91,23 @@ export class BackendTaskService {
     }
   }
 
-  async reportWorkerTaskErroredToBackend(error: Error): Promise<void> {
+  async reportWorkerTaskErroredToBackend(data: unknown): Promise<void> {
     this.logger.verbose('Reporting worker task errored to backend', {
       context: BackendTaskService.name,
     });
 
-    const data: MetaWorker.Info.TaskReport = {
+    const reportData: MetaWorker.Info.TaskReport = {
       taskId: this.taskId,
-      taskMethod: this.taskMethod,
       reason: MetaWorker.Enums.TaskReportReason.ERRORED,
       timestamp: Date.now(),
-      data: error,
+      data,
     };
 
     try {
       const _res = await this.client
-        .patch(this.apiUrl)
-        .send(data)
-        .set('Authorization', this.authInfo);
+        .patch(this.api.reportUrl)
+        .send(reportData)
+        .set('Authorization', this.api.authorization);
       this.logger.info(
         `Report worker task errored to backend ${_res.statusCode}`,
         {
@@ -135,16 +126,15 @@ export class BackendTaskService {
 
     const data: MetaWorker.Info.TaskReport = {
       taskId: this.taskId,
-      taskMethod: this.taskMethod,
       reason: MetaWorker.Enums.TaskReportReason.HEALTH_CHECK,
       timestamp: Date.now(),
     };
 
     try {
       const _res = await this.client
-        .patch(this.apiUrl)
+        .patch(this.api.reportUrl)
         .send(data)
-        .set('Authorization', this.authInfo);
+        .set('Authorization', this.api.authorization);
       this.logger.info(
         `Report worker task health status to backend ${_res.statusCode}`,
         { context: BackendTaskService.name },

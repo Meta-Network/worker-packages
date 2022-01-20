@@ -8,12 +8,14 @@ import winston, { createLogger, transport } from 'winston';
 import { CliConfigSetLevels } from 'winston/lib/winston/config';
 import LokiTransport from 'winston-loki';
 
+import { BackendApi } from '../service/api';
 import { LoggerServiceOptions, RemoveIndex } from '../types';
 import { isProd } from '../utils';
 
 export class LoggerService {
   public constructor(private readonly options: LoggerServiceOptions) {
-    const { appName, backendUrl, secret, lokiUrl } = this.options;
+    const { appName, lokiUrl, taskId } = this.options;
+    const api = new BackendApi(this.options);
     const dirName = appName.toLowerCase();
     const baseDir = fs.mkdtempSync(`${path.join(os.tmpdir(), dirName)}-`);
     const level = this.mkLevel(process.env.LOG_LEVEL);
@@ -22,16 +24,11 @@ export class LoggerService {
     const reportAppErrorStatus = (err: Error): boolean => {
       // Dirty code!
       try {
-        const baseUrl = `${backendUrl}/`.replace(/([^:]\/)\/+/g, '$1');
-        const _url = new URL(baseUrl).toString();
-        const _auth = `Basic ${Buffer.from(secret).toString('base64')}`;
-
         superagent
-          .patch(_url)
-          .send({ reason: 'ERRORED', timestamp: Date.now(), data: err })
-          .set('Authorization', _auth)
+          .patch(api.reportUrl)
+          .send({ taskId, reason: 'ERRORED', timestamp: Date.now(), data: err })
+          .set('Authorization', api.authorization)
           .then();
-
         return true;
       } finally {
         return true;
