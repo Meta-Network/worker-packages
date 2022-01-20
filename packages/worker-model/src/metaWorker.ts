@@ -176,12 +176,11 @@ export namespace MetaWorker {
       errorAt?: number;
     };
 
-    export type TaskReport = {
+    export type TaskReport<T = unknown> = {
       taskId: string;
-      taskMethod: Enums.WorkerTaskMethod;
       reason: Enums.TaskReportReason;
       timestamp: number;
-      data?: unknown;
+      data?: T;
     };
   }
 
@@ -214,7 +213,7 @@ export namespace MetaWorker {
      */
     export type PublishConfig = {
       site: Info.CmsSiteInfo & Info.CmsSiteConfig;
-      git: SetOptional<GitConfig, 'storage'>;
+      git: GitConfig;
       metadata?: Info.Metadata;
       publish?: Info.Publish;
     };
