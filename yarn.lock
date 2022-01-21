@@ -754,6 +754,11 @@
     npmlog "^4.1.2"
     write-file-atomic "^3.0.3"
 
+"@metaio/microservice-model@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@metaio/microservice-model/-/microservice-model-1.0.3.tgz#b25367192ec658b4b381198f7100ab74db81e84b"
+  integrity sha512-4p94ncBCegEDwaBeg+8kSbrv1tEzao6g9DYpH/KeTpVhDzs4DwiZfGOmEg+lTv04jUxKsFV2wM0ZAsb5GTiSsQ==
+
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
