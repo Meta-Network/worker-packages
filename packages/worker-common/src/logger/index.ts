@@ -1,3 +1,4 @@
+import { MetaInternalResult, ServiceCode } from '@metaio/microservice-model';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -24,9 +25,16 @@ export class LoggerService {
     const reportAppErrorStatus = (err: Error): boolean => {
       // Dirty code!
       try {
+        const data = new MetaInternalResult<Error>({
+          statusCode: 500,
+          serviceCode: ServiceCode.CMS,
+          retryable: false,
+          data: err,
+          message: err.message,
+        });
         superagent
           .patch(api.reportUrl)
-          .send({ taskId, reason: 'ERRORED', timestamp: Date.now(), data: err })
+          .send({ taskId, reason: 'ERRORED', timestamp: Date.now(), data })
           .set('Authorization', api.authorization)
           .then();
         return true;
@@ -112,6 +120,7 @@ export class LoggerService {
           versions: process.versions,
         },
         context: 'main',
+        taskId,
       },
       transports,
       exitOnError: reportAppErrorStatus,
@@ -154,10 +163,10 @@ export class LoggerService {
         console.log(pc.magenta('LoggerService:final:info:'), error);
       if (error instanceof Error) {
         process.exitCode = 1;
-        this.logger.error(`The process was exit cause: `, error);
+        this.logger.error(`The process was exit cause: ${error}`, error);
       } else {
         process.exitCode = 0;
-        this.logger.info(`The process was exit cause:`, ...error);
+        this.logger.info(`The process was exit cause: ${error}`);
       }
       this.logger.info(`Log files saved to ${this.logDir}`);
       this.logger.end(() => process.exit());
