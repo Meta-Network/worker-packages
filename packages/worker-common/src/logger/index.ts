@@ -33,7 +33,7 @@ export class LoggerService {
           message: err.message,
         });
         superagent
-          .patch(api.reportUrl)
+          .post(api.reportUrl)
           .send({ taskId, reason: 'ERRORED', timestamp: Date.now(), data })
           .set('Authorization', api.authorization)
           .then();
