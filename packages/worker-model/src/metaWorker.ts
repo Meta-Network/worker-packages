@@ -95,6 +95,7 @@ export namespace MetaWorker {
       timezone?: string;
       domain?: string;
       metaSpacePrefix?: string;
+      enableAutoPublish?: boolean;
     };
 
     export type Template = {
