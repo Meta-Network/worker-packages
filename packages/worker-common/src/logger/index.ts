@@ -19,6 +19,8 @@ export class LoggerService {
     const api = new BackendApi(this.options);
     const dirName = appName.toLowerCase();
     const baseDir = fs.mkdtempSync(`${path.join(os.tmpdir(), dirName)}-`);
+    const isDebug = !!process.env.DEBUG;
+    const enableConsoleRawOutput = !!process.env.ENABLE_FORMAT_INFO;
     const level = this.mkLevel(process.env.LOG_LEVEL);
     const noColor = 'NO_COLOR' in process.env;
 
@@ -52,7 +54,7 @@ export class LoggerService {
     );
 
     const errorConsoleFormat = winston.format.printf((info) => {
-      if (process.env.DEBUG && process.env.ENABLE_FORMAT_INFO)
+      if (isDebug && enableConsoleRawOutput)
         console.log(pc.magenta('errorConsoleFormat:info:'), info);
       const { metadata, label, timestamp, level, message } = info;
       const host = metadata?.host ? `:${metadata.host}` : '';
@@ -127,7 +129,7 @@ export class LoggerService {
     });
 
     const debugConsoleFormat = winston.format.printf((info) => {
-      if (process.env.DEBUG && process.env.ENABLE_FORMAT_INFO)
+      if (isDebug && enableConsoleRawOutput)
         console.log(pc.magenta('debugConsoleFormat:info:'), info);
       const { metadata, label, timestamp, level, message } = info;
       const host = metadata?.host ? `:${metadata.host}` : '';
@@ -159,7 +161,7 @@ export class LoggerService {
     this.logger = _logger;
 
     this.final = (error?: Error | string) => {
-      if (process.env.DEBUG && process.env.ENABLE_FORMAT_INFO)
+      if (isDebug && enableConsoleRawOutput)
         console.log(pc.magenta('LoggerService:final:info:'), error);
       if (error instanceof Error) {
         process.exitCode = 1;
@@ -190,10 +192,12 @@ export class LoggerService {
       'debug',
       'silly',
     ];
-    if (levelArr.includes(l)) {
+    if (process.env.DEBUG) {
+      return 'debug';
+    } else if (levelArr.includes(l)) {
       return l as keyof RemoveIndex<CliConfigSetLevels>;
+    } else {
+      return 'info';
     }
-    if (process.env.DEBUG) return 'debug';
-    return 'info';
   }
 }
