@@ -212,10 +212,8 @@ export namespace MetaWorker {
     /**
      * All about publish needed configs
      */
-    export type PublishConfig = {
-      site: Info.CmsSiteInfo & Info.CmsSiteConfig;
+    export type PublishConfig = Partial<Omit<DeployConfig, 'user' | 'git'>> & {
       git: GitConfig;
-      metadata?: Info.Metadata;
       publish?: Info.Publish;
     };
     export type PublishTaskConfig = BaseTaskConfig & PublishConfig;
@@ -223,9 +221,7 @@ export namespace MetaWorker {
     /**
      * All about post needed configs
      */
-    export type PostConfig = {
-      user: Info.UCenterUser;
-      site: Info.CmsSiteInfo & Info.CmsSiteConfig;
+    export type PostConfig = Pick<DeployConfig, 'user' | 'site'> & {
       git: SetOptional<GitConfig, 'publisher'>;
       post: Info.Post | Array<Info.Post>;
     };
@@ -234,7 +230,7 @@ export namespace MetaWorker {
     /**
      * All about dns configs
      */
-    export type DnsConfig = {
+    export type DnsConfig = Pick<DeployConfig, 'site'> & {
       site: Info.CmsSiteInfo & Info.CmsSiteConfig;
       dns: Info.Dns;
     };
