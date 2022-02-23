@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-unresolved
-import { SetOptional } from 'type-fest';
+import { Primitive, SetOptional } from 'type-fest';
 
 /* eslint-disable @typescript-eslint/no-namespace */
 export namespace MetaWorker {
@@ -123,7 +123,7 @@ export namespace MetaWorker {
     };
 
     export type Post = {
-      [key: string]: string | number | Array<string | number>;
+      [key: string]: Primitive | Array<Primitive>;
       title: string;
       source: string;
       cover?: string;
