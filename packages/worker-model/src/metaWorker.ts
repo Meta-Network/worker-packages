@@ -130,6 +130,7 @@ export namespace MetaWorker {
       summary?: string;
       categories?: string[];
       tags?: string[];
+      license?: string;
       createdAt?: string;
       updatedAt?: string;
     };
