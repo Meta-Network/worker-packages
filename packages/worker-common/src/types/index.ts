@@ -16,6 +16,7 @@ type CommonServiceOptions = {
 export type LoggerServiceOptions = CommonServiceOptions & {
   appName: string;
   lokiUrl: string;
+  metadata?: Record<string, unknown>;
 };
 
 export type BackendApiOptions = CommonServiceOptions;

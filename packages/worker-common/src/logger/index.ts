@@ -15,7 +15,7 @@ import { isProd } from '../utils';
 
 export class LoggerService {
   public constructor(private readonly options: LoggerServiceOptions) {
-    const { appName, lokiUrl, taskId } = this.options;
+    const { appName, lokiUrl, taskId, metadata } = this.options;
     const api = new BackendApi(this.options);
     const dirName = appName.toLowerCase();
     const baseDir = fs.mkdtempSync(`${path.join(os.tmpdir(), dirName)}-`);
@@ -119,10 +119,12 @@ export class LoggerService {
         runtime: {
           pid: process.pid,
           platform: process.platform,
-          versions: process.versions,
+          node: process.versions.node,
+          v8: process.versions.v8,
         },
         context: 'main',
         taskId,
+        ...metadata,
       },
       transports,
       exitOnError: reportAppErrorStatus,
