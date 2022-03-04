@@ -50,7 +50,7 @@ export class BackendTaskService {
 
     try {
       const _res = await this.client
-        .patch(this.api.reportUrl)
+        .post(this.api.reportUrl)
         .send(data)
         .set('Authorization', this.api.authorization);
       this.logger.info(
@@ -77,7 +77,7 @@ export class BackendTaskService {
 
     try {
       const _res = await this.client
-        .patch(this.api.reportUrl)
+        .post(this.api.reportUrl)
         .send(data)
         .set('Authorization', this.api.authorization);
       this.logger.info(
@@ -105,7 +105,7 @@ export class BackendTaskService {
 
     try {
       const _res = await this.client
-        .patch(this.api.reportUrl)
+        .post(this.api.reportUrl)
         .send(reportData)
         .set('Authorization', this.api.authorization);
       this.logger.info(
@@ -132,7 +132,7 @@ export class BackendTaskService {
 
     try {
       const _res = await this.client
-        .patch(this.api.reportUrl)
+        .post(this.api.reportUrl)
         .send(data)
         .set('Authorization', this.api.authorization);
       this.logger.info(
