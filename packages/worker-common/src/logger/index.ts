@@ -8,6 +8,7 @@ import superagent from 'superagent';
 import winston, { createLogger, transport } from 'winston';
 import { CliConfigSetLevels } from 'winston/lib/winston/config';
 import LokiTransport from 'winston-loki';
+import { TransportStreamOptions } from 'winston-transport';
 
 import { BackendApi } from '../service/api';
 import { LoggerServiceOptions, RemoveIndex } from '../types';
@@ -38,8 +39,8 @@ export class LoggerService {
           .post(api.reportUrl)
           .send({ taskId, reason: 'ERRORED', timestamp: Date.now(), data })
           .set('Authorization', api.authorization)
-          .then();
-        return true;
+          .catch(this.logger.error)
+          .finally();
       } finally {
         return true;
       }
@@ -65,8 +66,16 @@ export class LoggerService {
       )} ${timestamp}     ${level} ${pc.yellow(`[${ctx}]`)} ${message}`;
     });
 
+    const commonOptions: TransportStreamOptions = {
+      handleExceptions: true,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      handleRejections: true,
+    };
+
     const transports: transport[] = [
       new LokiTransport({
+        ...commonOptions,
         level: 'silly',
         json: true,
         labels: { job: appName },
@@ -75,10 +84,6 @@ export class LoggerService {
           winston.format.json(),
         ),
         host: lokiUrl,
-        handleExceptions: true,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        handleRejections: true,
         replaceTimestamp: true,
       }),
       new winston.transports.File({
@@ -87,15 +92,13 @@ export class LoggerService {
         format: winston.format.combine(winston.format.json()),
       }),
       new winston.transports.File({
+        ...commonOptions,
         level: 'error',
         filename: `${baseDir}/error.log`,
         format: winston.format.combine(winston.format.json()),
-        handleExceptions: true,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        handleRejections: true,
       }),
       new winston.transports.Console({
+        ...commonOptions,
         level: 'error',
         format: winston.format.combine(
           winston.format.colorize({ all: !noColor }),
@@ -104,10 +107,6 @@ export class LoggerService {
           }),
           errorConsoleFormat,
         ),
-        handleExceptions: true,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        handleRejections: true,
       }),
     ];
 
