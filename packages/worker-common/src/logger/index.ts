@@ -26,13 +26,18 @@ export class LoggerService {
     const reportAppErrorStatus = (err: Error): boolean => {
       try {
         const client = new BackendClient(this.logger, this.options);
-        const data = new MetaInternalResult<Error>({
-          statusCode: 500,
-          serviceCode: ServiceCode.CMS,
-          retryable: false,
-          data: err,
-          message: err.message,
-        });
+        const data = {
+          taskId,
+          reason: 'ERRORED',
+          timestamp: Date.now(),
+          data: new MetaInternalResult<Error>({
+            statusCode: 500,
+            serviceCode: ServiceCode.CMS,
+            retryable: false,
+            data: err,
+            message: err.message,
+          }),
+        };
         client.sendReport(data, 'errored').catch(this.logger.error).finally();
       } finally {
         return true;
