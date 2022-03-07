@@ -4,20 +4,18 @@ import os from 'os';
 import path from 'path';
 import pc from 'picocolors';
 import process from 'process';
-import superagent from 'superagent';
 import winston, { createLogger, transport } from 'winston';
 import { CliConfigSetLevels } from 'winston/lib/winston/config';
 import LokiTransport from 'winston-loki';
 import { TransportStreamOptions } from 'winston-transport';
 
-import { BackendApi } from '../service/api';
+import { BackendClient } from '../service/client';
 import { LoggerServiceOptions, RemoveIndex } from '../types';
 import { isProd } from '../utils';
 
 export class LoggerService {
   public constructor(private readonly options: LoggerServiceOptions) {
     const { appName, lokiUrl, taskId, metadata } = this.options;
-    const api = new BackendApi(this.options);
     const dirName = appName.toLowerCase();
     const baseDir = fs.mkdtempSync(`${path.join(os.tmpdir(), dirName)}-`);
     const isDebug = !!process.env.DEBUG;
@@ -26,8 +24,8 @@ export class LoggerService {
     const noColor = 'NO_COLOR' in process.env;
 
     const reportAppErrorStatus = (err: Error): boolean => {
-      // Dirty code!
       try {
+        const client = new BackendClient(this.logger, this.options);
         const data = new MetaInternalResult<Error>({
           statusCode: 500,
           serviceCode: ServiceCode.CMS,
@@ -35,12 +33,7 @@ export class LoggerService {
           data: err,
           message: err.message,
         });
-        superagent
-          .post(api.reportUrl)
-          .send({ taskId, reason: 'ERRORED', timestamp: Date.now(), data })
-          .set('Authorization', api.authorization)
-          .catch(this.logger.error)
-          .finally();
+        client.sendReport(data, 'errored').catch(this.logger.error).finally();
       } finally {
         return true;
       }
