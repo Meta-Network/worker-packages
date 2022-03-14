@@ -43,6 +43,13 @@ const publishTaskConfig: MetaWorker.Configs.PublishTaskConfig = {
       reponame: 'ghost',
       branchname: 'main',
     },
+    storage: {
+      token: 'test-token',
+      serviceType: MetaWorker.Enums.GitServiceType.GITHUB,
+      username: 'ghost',
+      reponame: 'ghost',
+      branchname: 'main',
+    },
   },
 };
 const postTaskConfig: MetaWorker.Configs.PostTaskConfig = {
